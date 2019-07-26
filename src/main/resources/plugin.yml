@@ -1,0 +1,8 @@
+name: LandClaim
+main: com.kgeezy.landclaim.LandClaim
+version: 1.0.0
+api-version: 1.13
+commands:
+  claim:
+    usage: /<command>
+    description: Claims a 16x16 square around the player
