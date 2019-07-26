@@ -10,9 +10,13 @@ import org.bukkit.plugin.Plugin
 object ClaimMonitor {
     fun monitorClaims(plugin: Plugin) {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
-            val claimsMap = PlayerClaimManager.getInstance().getMap()
-            val playerClaims = PlayerClaimManager.getInstance().getPlayerClaims()
-            print("Claim map size = ${claimsMap.size}, number of Claims in memory = ${playerClaims.size}")
+            val claimsMap = PlayerClaimManager.getInstance().getActiveMap()
+            val playerClaims = PlayerClaimManager.getInstance().getActivePlayerClaims()
+            val all = PlayerClaimManager.getInstance().getAllPlayerClaims()
+
+            print("Active Claim map size = ${claimsMap.size}, " +
+                    "active number of Claims in memory = ${playerClaims.size}, " +
+                    "all Claims in memory = ${all.size}")
 
         }, 0, 60L)
     }

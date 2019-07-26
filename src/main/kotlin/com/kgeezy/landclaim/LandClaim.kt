@@ -1,19 +1,19 @@
 package com.kgeezy.landclaim
 
-import com.kgeezy.landclaim.event.PlayerLoginListener
-import com.kgeezy.landclaim.event.PlayerMoveListener
-import com.kgeezy.landclaim.event.PlayerQuitListener
+import com.kgeezy.landclaim.event.block.BlockBreakListener
+import com.kgeezy.landclaim.event.block.BlockPlaceListener
+import com.kgeezy.landclaim.event.player.PlayerLoginListener
+import com.kgeezy.landclaim.event.player.PlayerMoveListener
+import com.kgeezy.landclaim.event.player.PlayerQuitListener
 import com.kgeezy.landclaim.land.ClaimFile
 import com.kgeezy.landclaim.manager.PlayerClaimManager
 import com.kgeezy.landclaim.player.ClaimListener
 import com.kgeezy.landclaim.util.ClaimMonitor
 import com.kgeezy.landclaim.util.FileManager
-import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.scheduler.BukkitScheduler
 
 class LandClaim: JavaPlugin(), ClaimListener {
 
@@ -25,7 +25,8 @@ class LandClaim: JavaPlugin(), ClaimListener {
         super.onEnable()
         FileManager.initialize(dataFolder)
 
-        addOnlinePlayers()
+        addClaimsForOnlinePlayers()
+        initAllClaims()
         registerEvents()
         ClaimMonitor.monitorClaims(this)
     }
@@ -34,11 +35,19 @@ class LandClaim: JavaPlugin(), ClaimListener {
         server.pluginManager.registerEvents(PlayerMoveListener(), this)
         server.pluginManager.registerEvents(PlayerQuitListener(), this)
         server.pluginManager.registerEvents(PlayerLoginListener(claimFile, this), this)
+        server.pluginManager.registerEvents(BlockBreakListener(), this)
+        server.pluginManager.registerEvents(BlockPlaceListener(), this)
     }
 
-    private fun addOnlinePlayers() {
+    private fun addClaimsForOnlinePlayers() {
         server.onlinePlayers.forEach { player ->
-            PlayerClaimManager.getInstance().add(player, claimFile.getClaims(player), this)
+            PlayerClaimManager.getInstance().addActive(player, claimFile.getClaims(player), this)
+        }
+    }
+
+    private fun initAllClaims() {
+        claimFile.getClaims().forEach { playerName, claims ->
+            PlayerClaimManager.getInstance().addToAll(playerName, claims)
         }
     }
 
@@ -53,7 +62,8 @@ class LandClaim: JavaPlugin(), ClaimListener {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (command.name == CLAIM_CMD && sender is Player) {
             claimFile.declareClaim(sender) { claim ->
-                PlayerClaimManager.getInstance().add(sender, listOf(claim), this)
+                PlayerClaimManager.getInstance().addActive(sender, listOf(claim), this)
+                PlayerClaimManager.getInstance().addToAll(sender.name, listOf(claim))
                 sender.sendMessage(CLAIM_CLAIMED)
             }
         }

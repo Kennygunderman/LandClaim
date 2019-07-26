@@ -31,4 +31,22 @@ class ClaimFile(fileManager: FileManager) {
             }
         }
     }
+
+    //TODO: move out shared config logic
+    fun getClaims(): Map<String, List<Claim>> {
+        val map = mutableMapOf<String, List<Claim>>()
+        config.getKeys(false).forEach { player ->
+           val claims = mutableListOf<Claim>()
+           config.getConfigurationSection(player)?.getKeys(true)?.forEach { claimId ->
+               val x = config.get("$player.$claimId.x") as? Int
+               val z = config.get("$player.$claimId.z") as? Int
+               val radius = config.get("$player.$claimId.radius") as? Int
+               if (x != null && z != null && radius != null) {
+                  claims.add(Claim(Center(x, z), radius))
+               }
+                map[player] = claims
+           }
+       }
+        return map
+    }
 }

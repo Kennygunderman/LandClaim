@@ -16,36 +16,56 @@ class PlayerClaimManager private constructor() {
         }
     }
 
-    private val playerClaims = mutableListOf<PlayerClaim>()
-    private val playerClaimMap = mutableMapOf<Player, MutableList<Claim>>()
+    /**
+     * A list of all claims on the server
+     */
+    private val allPlayerClaims = mutableListOf<PlayerClaim>()
 
-    fun getMap(): Map<Player, List<Claim>> = playerClaimMap
-    fun getPlayerClaims(): List<PlayerClaim> = playerClaims
+    /**
+     * All claims that are active with a player online
+     */
+    private val activePlayerClaims = mutableListOf<PlayerClaim>()
+    private val activePlayerClaimMap = mutableMapOf<Player, MutableList<Claim>>()
 
-    fun add(player: Player, claims: List<Claim>, claimListener: ClaimListener) {
-        if (playerClaimMap[player] == null) {
-            playerClaimMap[player] = claims.toMutableList()
+    fun getAllPlayerClaims(): List<PlayerClaim> = allPlayerClaims
+    fun getActiveMap(): Map<Player, List<Claim>> = activePlayerClaimMap
+    fun getActivePlayerClaims(): List<PlayerClaim> = activePlayerClaims
+
+    fun addActive(player: Player, claims: List<Claim>, claimListener: ClaimListener) {
+        if (activePlayerClaimMap[player] == null) {
+            activePlayerClaimMap[player] = claims.toMutableList()
         } else {
-            playerClaimMap[player]?.addAll(claims)
+            activePlayerClaimMap[player]?.addAll(claims)
         }
 
         claims.forEach { claim ->
-            playerClaims.add(PlayerClaim(player, claim, claimListener))
+            activePlayerClaims.add(PlayerClaim(player, claim, claimListener))
         }
     }
 
-    fun remove(player: Player) {
+    fun removeActive(player: Player) {
         if (hasClaim(player)) {
-            playerClaimMap.remove(player)
-            playerClaims.filter { pc -> pc.player == player }.forEach { pc ->
-                playerClaims.remove(pc)
+            activePlayerClaimMap.remove(player)
+            activePlayerClaims.filter { pc -> pc.player == player }.forEach { pc ->
+                activePlayerClaims.remove(pc)
             }
         }
     }
 
-    fun hasClaim(player: Player): Boolean = playerClaimMap[player] != null
+    /**
+     * Adds to all the claims on the server
+     */
+    fun addToAll(playerName: String, claims: List<Claim>) {
+        claims.forEach { claim ->
+            val pc = PlayerClaim(claim = claim)
+            pc.playerName = playerName
+            allPlayerClaims.add(pc)
+        }
+    }
+
+    fun hasClaim(player: Player): Boolean = activePlayerClaimMap[player] != null
 
     fun pcFromClaim(claim: Claim): PlayerClaim? {
-        return playerClaims.firstOrNull { pc -> pc.claim == claim }
+        return activePlayerClaims.firstOrNull { pc -> pc.claim == claim }
     }
 }

@@ -1,4 +1,4 @@
-package com.kgeezy.landclaim.event
+package com.kgeezy.landclaim.event.player
 
 import com.kgeezy.landclaim.land.ClaimFile
 import com.kgeezy.landclaim.manager.PlayerClaimManager
@@ -10,11 +10,11 @@ import org.bukkit.event.player.PlayerLoginEvent
 class PlayerLoginListener(private val claimFile: ClaimFile, private val listener: ClaimListener) : Listener {
 
     @EventHandler
-    fun playerLoginEvent(event: PlayerLoginEvent) {
+    fun onPlayerLogin(event: PlayerLoginEvent) {
         val claims = claimFile.getClaims(event.player)
 
         if (!claims.isEmpty()) {
-            PlayerClaimManager.getInstance().add(event.player, claims, listener)
+            PlayerClaimManager.getInstance().addActive(event.player, claims, listener)
         }
     }
 }
