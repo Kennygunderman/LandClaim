@@ -1,4 +1,4 @@
-package com.kgeezy.landclaim
+package com.kgeezy.landclaim.util
 
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
@@ -11,7 +11,8 @@ class FileManager private constructor(private val pluginFolder: File) {
         private var instance: FileManager? = null
 
         fun initialize(pluginFolder: File) {
-            instance = FileManager(pluginFolder)
+            instance =
+                FileManager(pluginFolder)
         }
 
         fun getInstance(): FileManager {

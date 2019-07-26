@@ -1,47 +1,63 @@
 package com.kgeezy.landclaim
 
-import com.kgeezy.landclaim.land.Claimer
+import com.kgeezy.landclaim.event.PlayerLoginListener
+import com.kgeezy.landclaim.event.PlayerMoveListener
+import com.kgeezy.landclaim.event.PlayerQuitListener
+import com.kgeezy.landclaim.land.ClaimFile
+import com.kgeezy.landclaim.manager.PlayerClaimManager
+import com.kgeezy.landclaim.player.ClaimListener
+import com.kgeezy.landclaim.util.ClaimMonitor
+import com.kgeezy.landclaim.util.FileManager
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.scheduler.BukkitScheduler
 
-class LandClaim: JavaPlugin() {
+class LandClaim: JavaPlugin(), ClaimListener {
 
-    private val claimer by lazy {
-        Claimer(FileManager.getInstance())
+    private val claimFile by lazy {
+        ClaimFile(FileManager.getInstance())
     }
 
     override fun onEnable() {
         super.onEnable()
         FileManager.initialize(dataFolder)
 
+        addOnlinePlayers()
+        registerEvents()
+        ClaimMonitor.monitorClaims(this)
+    }
+
+    private fun registerEvents() {
         server.pluginManager.registerEvents(PlayerMoveListener(), this)
+        server.pluginManager.registerEvents(PlayerQuitListener(), this)
+        server.pluginManager.registerEvents(PlayerLoginListener(claimFile, this), this)
+    }
+
+    private fun addOnlinePlayers() {
+        server.onlinePlayers.forEach { player ->
+            PlayerClaimManager.getInstance().add(player, claimFile.getClaims(player), this)
+        }
+    }
+
+    override fun playerLeft(player: Player) {
+        player.sendMessage(CLAIM_LEFT)
+    }
+
+    override fun playerEntered(player: Player) {
+        player.sendMessage(String.format(CLAIM_ENTERED, player.name))
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-
         if (command.name == CLAIM_CMD && sender is Player) {
-            claimer.claim(sender)
+            claimFile.declareClaim(sender) { claim ->
+                PlayerClaimManager.getInstance().add(sender, listOf(claim), this)
+                sender.sendMessage(CLAIM_CLAIMED)
+            }
         }
 
         return true
     }
 }
-
-/**
- * Hows it gonna work?
- *
- * save the 16x16 piece of land  to config.
- *
- * load configs in memory so we don't have to access YML file every time
- *
- * track to the player move event for displaying message if in landclaim or not
- *
- * track player block event to see if the player is breaking a block in a claimed piece of land
- *
- *
- *
- *
- *
- * */
