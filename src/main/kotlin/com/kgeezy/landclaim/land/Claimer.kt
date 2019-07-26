@@ -1,5 +1,6 @@
-package com.kgeezy.landclaim
+package com.kgeezy.landclaim.land
 
+import com.kgeezy.landclaim.FileManager
 import org.bukkit.entity.Player
 import java.util.*
 

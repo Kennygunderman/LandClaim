@@ -1,5 +1,6 @@
 package com.kgeezy.landclaim
 
+import com.kgeezy.landclaim.land.Claimer
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -14,6 +15,8 @@ class LandClaim: JavaPlugin() {
     override fun onEnable() {
         super.onEnable()
         FileManager.initialize(dataFolder)
+
+        server.pluginManager.registerEvents(PlayerMoveListener(), this)
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
