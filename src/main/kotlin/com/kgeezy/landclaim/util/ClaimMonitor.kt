@@ -15,9 +15,9 @@ object ClaimMonitor {
             val all = PlayerClaimManager.getInstance().getAllPlayerClaims()
 
             print("Active Claim map size = ${claimsMap.size}, " +
-                    "active number of Claims in memory = ${playerClaims.size}, " +
+                    "active Claims in memory = ${playerClaims.size}, " +
                     "all Claims in memory = ${all.size}")
 
-        }, 0, 60L)
+        }, 0, 200L)
     }
 }

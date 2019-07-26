@@ -15,7 +15,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
-class LandClaim: JavaPlugin(), ClaimListener {
+class LandClaim : JavaPlugin(), ClaimListener {
 
     private val claimFile by lazy {
         ClaimFile(FileManager.getInstance())
@@ -61,10 +61,12 @@ class LandClaim: JavaPlugin(), ClaimListener {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (command.name == CLAIM_CMD && sender is Player) {
-            claimFile.declareClaim(sender) { claim ->
-                PlayerClaimManager.getInstance().addActive(sender, listOf(claim), this)
-                PlayerClaimManager.getInstance().addToAll(sender.name, listOf(claim))
-                sender.sendMessage(CLAIM_CLAIMED)
+            claimFile.declareClaim(sender) { claim, msg ->
+                claim?.let { c ->
+                    PlayerClaimManager.getInstance().addActive(sender, listOf(c), this)
+                    PlayerClaimManager.getInstance().addToAll(sender.name, listOf(c))
+                }
+                sender.sendMessage(msg)
             }
         }
 
