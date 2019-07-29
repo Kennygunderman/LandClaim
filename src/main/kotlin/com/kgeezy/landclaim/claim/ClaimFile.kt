@@ -1,9 +1,9 @@
-package com.kgeezy.landclaim.land
+package com.kgeezy.landclaim.claim
 
 import com.kgeezy.landclaim.CANT_CLAIM
 import com.kgeezy.landclaim.CLAIM_CLAIMED
 import com.kgeezy.landclaim.manager.PlayerClaimManager
-import com.kgeezy.landclaim.util.FileManager
+import com.kgeezy.landclaim.manager.FileManager
 import org.bukkit.entity.Player
 import java.util.*
 

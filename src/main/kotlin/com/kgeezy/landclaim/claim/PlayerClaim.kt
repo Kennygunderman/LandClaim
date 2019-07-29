@@ -1,16 +1,10 @@
-package com.kgeezy.landclaim.player
+package com.kgeezy.landclaim.claim
 
-import com.kgeezy.landclaim.land.Claim
 import org.bukkit.entity.Player
-
-interface ClaimListener {
-    fun playerLeft(player: Player)
-    fun playerEntered(player: Player)
-}
 
 class PlayerClaim(val player: Player? = null, val claim: Claim, private val claimListener: ClaimListener? = null) {
 
-    var playerName: String? =null
+    var playerName: String? = null
 
     init {
         playerName = player?.name

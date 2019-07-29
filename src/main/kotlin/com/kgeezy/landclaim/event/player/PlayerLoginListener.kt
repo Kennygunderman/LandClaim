@@ -1,6 +1,6 @@
 package com.kgeezy.landclaim.event.player
 
-import com.kgeezy.landclaim.land.ClaimFile
+import com.kgeezy.landclaim.claim.ClaimFile
 import com.kgeezy.landclaim.manager.PlayerClaimManager
 import com.kgeezy.landclaim.player.ClaimListener
 import org.bukkit.event.EventHandler

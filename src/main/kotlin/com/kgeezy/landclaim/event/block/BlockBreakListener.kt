@@ -1,11 +1,12 @@
 package com.kgeezy.landclaim.event.block
 
 import com.kgeezy.landclaim.CANT_MODIFY_CLAIM
+import com.kgeezy.landclaim.claim.Claim
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 
-class BlockBreakListener: BaseBlockModifiedListener(), Listener {
+class BlockBreakListener(antiBuildZone: Claim): BaseBlockModifiedListener(antiBuildZone), Listener {
 
     @EventHandler
     fun onBlockBreak(event: BlockBreakEvent) {

@@ -1,8 +1,8 @@
-package com.kgeezy.landclaim.land
+package com.kgeezy.landclaim.claim
 
 data class Center(val x: Int, val z: Int)
 
-class Claim(private val center: Center, private val radius: Int) {
+class Claim(val center: Center, val radius: Int) {
 
     fun isInClaim(x: Int, z: Int): Boolean {
         val x1z1 = x1z1()

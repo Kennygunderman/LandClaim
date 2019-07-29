@@ -1,15 +1,16 @@
 package com.kgeezy.landclaim
 
+import com.kgeezy.landclaim.claim.ClaimFile
+import com.kgeezy.landclaim.claim.ClaimListener
 import com.kgeezy.landclaim.event.block.BlockBreakListener
 import com.kgeezy.landclaim.event.block.BlockPlaceListener
 import com.kgeezy.landclaim.event.player.PlayerLoginListener
 import com.kgeezy.landclaim.event.player.PlayerMoveListener
 import com.kgeezy.landclaim.event.player.PlayerQuitListener
-import com.kgeezy.landclaim.land.ClaimFile
+import com.kgeezy.landclaim.manager.ConfigManager
+import com.kgeezy.landclaim.manager.FileManager
 import com.kgeezy.landclaim.manager.PlayerClaimManager
-import com.kgeezy.landclaim.player.ClaimListener
 import com.kgeezy.landclaim.util.ClaimMonitor
-import com.kgeezy.landclaim.util.FileManager
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -19,6 +20,10 @@ class LandClaim : JavaPlugin(), ClaimListener {
 
     private val claimFile by lazy {
         ClaimFile(FileManager.getInstance())
+    }
+
+    private val configManager by lazy {
+        ConfigManager(FileManager.getInstance())
     }
 
     override fun onEnable() {
@@ -32,11 +37,11 @@ class LandClaim : JavaPlugin(), ClaimListener {
     }
 
     private fun registerEvents() {
-        server.pluginManager.registerEvents(PlayerMoveListener(), this)
+        server.pluginManager.registerEvents(PlayerMoveListener(configManager.antiBuildZone), this)
         server.pluginManager.registerEvents(PlayerQuitListener(), this)
         server.pluginManager.registerEvents(PlayerLoginListener(claimFile, this), this)
-        server.pluginManager.registerEvents(BlockBreakListener(), this)
-        server.pluginManager.registerEvents(BlockPlaceListener(), this)
+        server.pluginManager.registerEvents(BlockBreakListener(configManager.antiBuildZone), this)
+        server.pluginManager.registerEvents(BlockPlaceListener(configManager.antiBuildZone), this)
     }
 
     private fun addClaimsForOnlinePlayers() {

@@ -1,8 +1,8 @@
 package com.kgeezy.landclaim.manager
 
-import com.kgeezy.landclaim.land.Claim
+import com.kgeezy.landclaim.claim.Claim
 import com.kgeezy.landclaim.player.ClaimListener
-import com.kgeezy.landclaim.player.PlayerClaim
+import com.kgeezy.landclaim.claim.PlayerClaim
 import org.bukkit.entity.Player
 
 class PlayerClaimManager private constructor() {
